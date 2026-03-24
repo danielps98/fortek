@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin</title>
+</head>
+
+<body>
+
+<h2>Painel Admin</h2>
+
+<input id="senha" placeholder="Senha"><br><br>
+
+<input id="nome" placeholder="Nome"><br><br>
+<input id="descricao" placeholder="Descrição"><br><br>
+
+<select id="status">
+  <option value="disponivel">Disponível</option>
+  <option value="indisponivel">Indisponível</option>
+</select><br><br>
+
+<input type="file" id="imagem"><br><br>
+
+<button onclick="salvar()">Cadastrar</button>
+
+<hr>
+
+<h3>Lista</h3>
+<ul id="lista"></ul>
+
+<script>
+
+function salvar() {
+
+  let formData = new FormData();
+
+  formData.append("nome", document.getElementById("nome").value);
+  formData.append("descricao", document.getElementById("descricao").value);
+  formData.append("status", document.getElementById("status").value);
+  formData.append("senha", document.getElementById("senha").value);
+
+  let file = document.getElementById("imagem").files[0];
+  formData.append("imagem", file);
+
+  fetch('/maquinas', {
+    method: 'POST',
+    body: formData
+  })
+  .then(() => {
+    alert("Salvo!");
+    carregar();
+  });
+}
+
+function carregar() {
+  fetch('/admin/maquinas')
+    .then(res => res.json())
+    .then(data => {
+
+      let html = "";
+
+      data.forEach(m => {
+        html += `<li>${m.nome} - ${m.status}</li>`;
+      });
+
+      document.getElementById("lista").innerHTML = html;
+    });
+}
+
+carregar();
+
+</script>
+
+</body>
+</html>
